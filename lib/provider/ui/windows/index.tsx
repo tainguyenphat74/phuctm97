@@ -5,10 +5,10 @@ import { useAtomValue } from "jotai";
 import { openWindowsAtom } from "~/lib/window";
 
 import { ChatGPT } from "./chatgpt";
+import { Community } from "./community";
 import { Exception } from "./exception";
 import { NotFound } from "./not-found";
 import { Notepad } from "./notepad";
-import { PCommunity } from "./p-community";
 import { Welcome } from "./welcome";
 
 interface WindowProps {
@@ -27,7 +27,7 @@ function Window({ window }: WindowProps): ReactNode {
       return <ChatGPT />;
     }
     case "P Community": {
-      return <PCommunity />;
+      return <Community />;
     }
     case "404": {
       return <NotFound />;
