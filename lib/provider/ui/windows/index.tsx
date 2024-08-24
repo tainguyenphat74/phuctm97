@@ -8,6 +8,7 @@ import { ChatGPT } from "./chatgpt";
 import { Exception } from "./exception";
 import { NotFound } from "./not-found";
 import { Notepad } from "./notepad";
+import { PCommunity } from "./p-community";
 import { Welcome } from "./welcome";
 
 interface WindowProps {
@@ -24,6 +25,9 @@ function Window({ window }: WindowProps): ReactNode {
     }
     case "ChatGPT": {
       return <ChatGPT />;
+    }
+    case "P Community": {
+      return <PCommunity />;
     }
     case "404": {
       return <NotFound />;
