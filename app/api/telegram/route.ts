@@ -38,6 +38,11 @@ bot.command("start", async (context) => {
 });
 
 bot.on("message:text", async (context) => {
+  if (
+    context.message.chat.id === Number(process.env.TELEGRAM_COMMUNITY_GROUP_ID)
+  )
+    return;
+
   const licenseKey = context.message.text.trim();
 
   try {
