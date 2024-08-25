@@ -149,7 +149,7 @@ function Content({ tab }: ContentProps): ReactNode {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                TypesScript
+                TypeScript
               </Anchor>
               : Programming Language
             </li>
