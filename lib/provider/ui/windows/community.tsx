@@ -45,7 +45,7 @@ export function Community(): ReactNode {
       });
   }
   return (
-    <StyledWindow window="P Community" defaultWidth={400} defaultHeight={350}>
+    <StyledWindow window="Community" defaultWidth={400} defaultHeight={350}>
       <Title>Join P Community</Title>
       <Description>
         Connect with other Vietnamese developers, share your challenges, get

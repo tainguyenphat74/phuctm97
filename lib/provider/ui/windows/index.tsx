@@ -26,7 +26,7 @@ function Window({ window }: WindowProps): ReactNode {
     case "ChatGPT": {
       return <ChatGPT />;
     }
-    case "P Community": {
+    case "Community": {
       return <Community />;
     }
     case "404": {
