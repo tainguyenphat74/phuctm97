@@ -80,11 +80,15 @@ export function Community(): ReactNode {
 
   const handleJoinNow = (): void => {
     setIsLoading(true);
-    buyLicense().catch((error: unknown) => {
-      setError("An error occurred. Please try again.");
-      console.error(error);
-      setIsLoading(false);
-    });
+    buyLicense()
+      .catch((error: unknown) => {
+        setError("An error occurred. Please try again.");
+        console.error(error);
+        setIsLoading(false);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const handleLanguageChange = (selectedOption: SelectOption<string>): void => {
