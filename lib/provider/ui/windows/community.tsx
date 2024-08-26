@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import { useState } from "react";
-import { Anchor, Button, Hourglass, TextInput } from "react95";
+import { Anchor, Button } from "react95";
 import styled from "styled-components";
 
 import { buyLicense } from "~/lib/buy-license";
@@ -15,23 +15,9 @@ const StyledWindow = styled(Window)`
   padding: 20px;
 `;
 
-const TitleContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 20px;
-`;
-
 const Title = styled.h2`
+  margin-bottom: 20px;
   font-weight: bold;
-  flex-grow: 1;
-  text-align: center;
-`;
-
-const LanguageSwitch = styled(Button)`
-  font-size: 0.8rem;
-  padding: 4px 8px;
 `;
 
 const Description = styled.p`
@@ -41,78 +27,29 @@ const Description = styled.p`
 
 const ErrorMessage = styled.p`
   color: red;
+  margin-top: 10px;
 `;
-
-const EmailInput = styled(TextInput)`
-  width: 100%;
-  margin-bottom: 20px;
-`;
-
-const content = {
-  vi: {
-    title: "Tham gia P Community",
-    description:
-      "Kết nối với các lập trình viên Việt Nam khác, chia sẻ kiến thức, kinh nghiệm, trải nghiệm của bạn, nhận sự giúp đỡ từ {{author}}, và những người khác trong cộng đồng.",
-    note: "Lưu ý rằng cộng đồng của chúng tôi chủ yếu giao tiếp bằng tiếng Việt. Chúng tôi khuyên bạn chỉ nên tham gia nếu bạn nói được tiếng Việt.",
-    joinButton: "Tham gia ngay",
-    emailPlaceholder: "Nhập email của bạn (có thể để trống)",
-    emailError: "Email không hợp lệ",
-  },
-  en: {
-    title: "Join P Community",
-    description:
-      "Connect with other Vietnamese developers, share your challenges, get help from {{author}}, and others in the community.",
-    note: "Please note that our community primarily communicates in Vietnamese. We recommend joining only if you speak Vietnamese.",
-    joinButton: "Join Now",
-    emailPlaceholder: "Enter your email (optional)",
-    emailError: "Invalid email",
-  },
-};
-
-const validateEmail = (email: string): boolean => {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email);
-};
 
 export function Community(): ReactNode {
   const [isLoading, setIsLoading] = useState(false);
-  const [language, setLanguage] = useState<"vi" | "en">("en");
-  const [email, setEmail] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const data = content[language];
-
-  const handleEmailChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    const newEmail = event.target.value;
-    setEmail(newEmail);
-    setEmailError("");
-  };
-
-  const handleJoinNow = (): void => {
-    if (email && !validateEmail(email)) {
-      setEmailError(data.emailError);
-      return;
-    }
-    setEmailError("");
+  const [error, setError] = useState("");
+  function handleJoinNow(): void {
     setIsLoading(true);
-    buyLicense(email).catch((error: unknown) => {
-      setErrorMessage("An error occurred. Please try again.");
-      console.error(error);
-      setIsLoading(false);
-    });
-  };
-
-  const toggleLanguage = (): void => {
-    setLanguage(language === "vi" ? "en" : "vi");
-  };
-
-  const renderDescription = (description: string): ReactNode => {
-    const parts = description.split("{{author}}");
-    return (
-      <>
-        {parts[0]}
+    buyLicense()
+      .catch((error: unknown) => {
+        setError("An error occurred. Please try again.");
+        console.error(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }
+  return (
+    <StyledWindow window="Community" defaultWidth={400} defaultHeight={350}>
+      <Title>Join P Community</Title>
+      <Description>
+        Connect with other Vietnamese developers, share your challenges, get
+        help from{" "}
         <Anchor
           css="display: inline-block;"
           href="https://x.com/phuctm97"
@@ -121,41 +58,20 @@ export function Community(): ReactNode {
         >
           Minh-Phuc Tran
         </Anchor>
-        {parts[1]}
-      </>
-    );
-  };
-
-  return (
-    <StyledWindow window="Community" defaultWidth={450} defaultHeight={450}>
-      <TitleContainer>
-        <div style={{ width: "35px" }} />
-        <Title>{data.title}</Title>
-        <LanguageSwitch onClick={toggleLanguage}>
-          {language === "vi" ? "VI" : "EN"}
-        </LanguageSwitch>
-      </TitleContainer>
-      <Description>{renderDescription(data.description)}</Description>
-      <Description>{data.note}</Description>
-      <EmailInput
-        placeholder={data.emailPlaceholder}
-        value={email}
-        onChange={handleEmailChange}
-        css="width: 70%;"
-      />
-      {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-      {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
-      {isLoading ? (
-        <Hourglass size={24} css="margin-top: 5px; margin-bottom: 5px;" />
-      ) : (
-        <Button
-          css="flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 5px; margin-bottom: 5px;"
-          onClick={handleJoinNow}
-          disabled={!!emailError}
-        >
-          {data.joinButton}
-        </Button>
-      )}
+        , and others in the community.
+      </Description>
+      <Description>
+        Please note that our community primarily communicates in Vietnamese. We
+        recommend joining only if you speak Vietnamese.
+      </Description>
+      <Button
+        css="flex-shrink: 0;"
+        onClick={handleJoinNow}
+        disabled={isLoading}
+      >
+        {isLoading ? "Loading…" : "Join Now"}
+      </Button>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
     </StyledWindow>
   );
 }
