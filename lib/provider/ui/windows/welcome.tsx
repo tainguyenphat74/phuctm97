@@ -1,12 +1,19 @@
 import type { ReactNode } from "react";
 
-import { Bulb, Faxcover140, Progman24 } from "@react95/icons";
+import {
+  Bulb,
+  Faxcover140,
+  FilePencil,
+  Progman24,
+  Wab321019,
+} from "@react95/icons";
+import { useSetAtom } from "jotai";
 import { useCallback, useState } from "react";
 import { Anchor, Button, Frame, Separator } from "react95";
 import { createHatchedBackground, createScrollbars } from "react95/dist/common";
 import styled from "styled-components";
 
-import { Window } from "~/lib/window";
+import { openWindowAtom, Window } from "~/lib/window";
 
 const StyledFrame = styled(Frame)`
   flex-grow: 1;
@@ -30,13 +37,21 @@ function openXOrTwitter(): void {
   open("https://x.com/phuctm97", "_blank", "noopener noreferrer");
 }
 
-type Tab = "aboutWebsite" | "aboutAuthor" | "acknowledgements";
+type Tab =
+  | "aboutWebsite"
+  | "aboutAuthor"
+  | "aboutContribute"
+  | "acknowledgements";
 
 interface ContentProps {
   tab: Tab;
 }
 
 function Content({ tab }: ContentProps): ReactNode {
+  const openWindow = useSetAtom(openWindowAtom);
+  const handleClickCommunity = useCallback(() => {
+    openWindow("Community");
+  }, [openWindow]);
   switch (tab) {
     case "aboutWebsite": {
       return (
@@ -232,6 +247,55 @@ function Content({ tab }: ContentProps): ReactNode {
         </>
       );
     }
+    case "aboutContribute": {
+      return (
+        <>
+          <h2 css="font-weight: bold; display: flex; align-items: center;">
+            <Wab321019 variant="32x32_4" css="margin-right: 8px;" />{" "}
+            Contributors to this project
+          </h2>
+          <ul css="margin-left: 40px; margin-top: 20px;">
+            <li css="list-style: square;">
+              <Anchor
+                href="https://x.com/khanhduyvt"
+                target="_blank"
+                rel="noopener noreferrer"
+                css="margin-right: 8px;"
+              >
+                Khanh Duy
+              </Anchor>
+              : A talented developer who contributed to the project by
+              implementing the{" "}
+              <Anchor
+                css="cursor: pointer;"
+                rel="noopener noreferrer"
+                onClick={handleClickCommunity}
+              >
+                Community
+              </Anchor>{" "}
+              feature.
+            </li>
+          </ul>
+
+          <p css="margin-left: 8px; margin-top: 60px;">
+            <FilePencil
+              variant="32x32_4"
+              css="margin-bottom: -6px; margin-right: 4px;"
+            />{" "}
+            Contributions to this project are welcome! If you&apos;d like to
+            contribute, please check out the project on{" "}
+            <Anchor
+              href="https://github.com/phuctm97/phuctm97"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </Anchor>{" "}
+            and feel free to submit pull requests or open issues.
+          </p>
+        </>
+      );
+    }
   }
 }
 
@@ -242,6 +306,9 @@ export function Welcome(): ReactNode {
   }, [setTab]);
   const handleClickAboutAuthor = useCallback(() => {
     setTab("aboutAuthor");
+  }, [setTab]);
+  const handleClickAboutContribute = useCallback(() => {
+    setTab("aboutContribute");
   }, [setTab]);
   const handleClickAcknowledgements = useCallback(() => {
     setTab("acknowledgements");
@@ -264,6 +331,12 @@ export function Welcome(): ReactNode {
             onClick={handleClickAboutAuthor}
           >
             About the Author
+          </Button>
+          <Button
+            css="flex-shrink: 0; margin-top: 10px;"
+            onClick={handleClickAboutContribute}
+          >
+            About Contribution
           </Button>
           <Separator css="flex-shrink: 0; margin-top: 40px; margin-bottom: 20px;" />
           <Button css="flex-shrink: 0;" onClick={handleClickAcknowledgements}>
