@@ -1,5 +1,9 @@
 declare namespace NodeJS {
   interface ProcessEnv {
+    NEXT_PUBLIC_SEPAY_BANK_NAME: string;
+    NEXT_PUBLIC_SEPAY_BANK_ACCOUNT_NUMBER: string;
+    NEXT_PUBLIC_SEPAY_AMOUNT: string;
+    NEXT_PUBLIC_TELEGRAM_COMMUNITY_BOT_ID: string;
     LEMON_SQUEEZY_STORE_ID: string;
     LEMON_SQUEEZY_COMMUNITY_MEMBERSHIP_VARIANT_ID: string;
     LEMON_SQUEEZY_API_KEY: string;
@@ -7,7 +11,8 @@ declare namespace NodeJS {
     TELEGRAM_COMMUNITY_BOT_TOKEN: string;
     TELEGRAM_COMMUNITY_GROUP_ID: string;
     TELEGRAM_COMMUNITY_WEBHOOK_SECRET_TOKEN: string;
-    TELEGRAM_COMMUNITY_BOT_ID: string;
-    SEPAY_API_TOKEN: string;
+    SEPAY_API_KEY: string;
+    SEPAY_WEBHOOK_SECRET: string;
+    POSTGRES_URL: string;
   }
 }

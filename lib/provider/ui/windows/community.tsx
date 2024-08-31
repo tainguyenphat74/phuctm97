@@ -2,12 +2,12 @@ import type { ReactNode } from "react";
 import type { SelectOption } from "react95/dist/Select/Select.types";
 
 import { customAlphabet } from "nanoid";
+import { numbers } from "nanoid-dictionary";
 import { useCallback, useEffect, useState } from "react";
 import { Anchor, Button, Hourglass, Select } from "react95";
 import { createScrollbars } from "react95/dist/common";
 import styled from "styled-components";
 
-import { addLicenseToKVRedirectTelegram } from "~/lib/add-license-kv-redirect-telegram";
 import { buyLicense } from "~/lib/buy-license";
 import { checkSEPayTransactionSuccess } from "~/lib/check-sepay-transaction-success";
 import { Window } from "~/lib/window";
@@ -145,7 +145,7 @@ export function Community(): ReactNode {
   const [error, setError] = useState("");
   const [currentView, setCurrentView] = useState<"main" | "payment">("main");
   const [showQRCode, setShowQRCode] = useState(false);
-  const [transactionId, setTransactionId] = useState("");
+  const [code, setCode] = useState("");
   const [isCheckingTransaction, setIsCheckingTransaction] = useState(false);
   const [qrCodeExpirationTime, setQrCodeExpirationTime] = useState(0);
   const [remainingTime, setRemainingTime] = useState(0);
@@ -156,12 +156,8 @@ export function Community(): ReactNode {
   };
 
   const handleVNPay = (): void => {
-    const nanoid = customAlphabet(
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-      10,
-    );
-    const newTransactionId = nanoid();
-    setTransactionId(newTransactionId);
+    const code = customAlphabet(numbers, 10);
+    setCode(code());
     setShowQRCode(true);
     setQrCodeExpirationTime(Date.now() + 5 * 60 * 1000);
     setIsCheckingTransaction(true);
@@ -191,19 +187,16 @@ export function Community(): ReactNode {
   };
 
   const checkSEPayTransaction = useCallback(async () => {
-    if (!transactionId) return;
+    if (!code) return;
 
-    const success = await checkSEPayTransactionSuccess(transactionId);
+    const success = await checkSEPayTransactionSuccess(code);
     if (success) {
       setIsCheckingTransaction(false);
       setShowQRCode(false);
       setError("");
-      setIsLoading(true);
-      void addLicenseToKVRedirectTelegram(transactionId).finally(() => {
-        setIsLoading(false);
-      });
+      location.href = `https://t.me/${process.env.NEXT_PUBLIC_TELEGRAM_COMMUNITY_BOT_ID}?start=TMP${code}`;
     }
-  }, [transactionId]);
+  }, [code]);
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
@@ -312,7 +305,7 @@ export function Community(): ReactNode {
         <ModalOverlay>
           <ModalContent>
             <QRCodeImage
-              src={`https://qr.sepay.vn/img?bank=${process.env.NEXT_PUBLIC_SEPAY_BANK_NAME ?? ""}&acc=${process.env.NEXT_PUBLIC_SEPAY_BANK_ACCOUNT_NUMBER ?? ""}&template=compact&amount=1999000&des=${transactionId}`}
+              src={`https://qr.sepay.vn/img?bank=${process.env.NEXT_PUBLIC_SEPAY_BANK_NAME}&acc=${process.env.NEXT_PUBLIC_SEPAY_BANK_ACCOUNT_NUMBER}&template=qronly&amount=${process.env.NEXT_PUBLIC_SEPAY_AMOUNT}&des=TMP${code}`}
               alt="VNPay QR Code"
             />
             <QRCodeDescription>
