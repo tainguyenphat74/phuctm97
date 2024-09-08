@@ -8,7 +8,13 @@ import type {
 
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useAtomValue, useSetAtom } from "jotai";
-import { useCallback, useEffect, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from "react";
 import {
   Button,
   Window as React95Window,
@@ -155,14 +161,12 @@ export type WindowProps = PropsWithChildren<{
   defaultHeight?: number;
 }>;
 
-export function Window({
-  window,
-  className,
-  defaultWidth,
-  defaultHeight,
-  children,
-}: WindowProps): ReactNode {
+export const Window = forwardRef<HTMLDivElement, WindowProps>(function Window(
+  { window, className, defaultWidth, defaultHeight, children },
+  forwardRef,
+): ReactNode {
   const [element, ref] = useNullableState<HTMLElement>();
+  useImperativeHandle(forwardRef, () => element as HTMLDivElement, [element]);
   const [rect, setRect] = useState<Rect>();
   useEffect(() => {
     if (!element) {
@@ -302,4 +306,4 @@ export function Window({
       </WindowContent>
     </StyledWindow>
   );
-}
+});
