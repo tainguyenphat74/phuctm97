@@ -1,88 +1,75 @@
 import type { ReactNode } from "react";
 
-import type { CommonProps, Language } from "./types";
+import type { Language } from "./types";
 
 import { User, User2, User3, Wab321019 } from "@react95/icons";
-import { useEffect, useState } from "react";
-import { Button, MenuList, MenuListItem, Separator } from "react95";
+import { useState } from "react";
+import { Button, createScrollbars, GroupBox, Radio, Separator } from "react95";
 import styled from "styled-components";
 
-import { useNullableState } from "~/lib/use-nullable-state";
 import { Window } from "~/lib/window";
 
 import communityImage from "./community.webp";
+import cssModule from "./index.module.css";
 import { Payment } from "./payment";
 import { content } from "./types";
 
 const StyledWindow = styled(Window)`
   display: flex;
   flex-direction: column;
+`;
+
+const ScrollView = styled.div`
+  display: flex;
+  flex-direction: column;
   align-items: stretch;
-  justify-content: space-between;
-  padding: 20px;
-  height: 100%;
+  justify-content: start;
+  overflow-x: hidden;
   overflow-y: auto;
+  height: 100%;
+  ${createScrollbars()}
 `;
 
-const ContentWrapper = styled.div<{ isMobile: boolean }>`
+const ContentWrapper = styled.div`
+  flex-grow: 1;
+  flex-shrink: 1;
   display: flex;
-  flex-direction: ${({ isMobile }) => (isMobile ? "column" : "row")};
+  flex-direction: row;
   align-items: stretch;
-  justify-content: space-between;
-  flex: 1;
 `;
 
-const ImageContainer = styled.div<{ isMobile: boolean }>`
-  display: flex;
-  align-items: ${({ isMobile }) => (isMobile ? "center" : "flex-start")};
-  justify-content: ${({ isMobile }) => (isMobile ? "center" : "flex-start")};
-  flex: 0 0 auto;
-  max-width: ${({ isMobile }) => (isMobile ? "100%" : "50%")};
-  height: ${({ isMobile }) => (isMobile ? "auto" : "100%")};
-  margin-bottom: ${({ isMobile }) => (isMobile ? "20px" : "0")};
+const ImageContainer = styled.div`
+  width: 30%;
+  position: relative;
+  padding-bottom: 50%;
 `;
 
-interface CommunityImageProps {
-  maxWidth: number;
-  maxHeight: number;
-  isMobile: boolean;
-}
-
-const CommunityImage = styled.img<CommunityImageProps>`
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  max-width: 100%;
-  max-height: ${(props: CommunityImageProps) =>
-    props.isMobile ? "auto" : `${props.maxHeight.toString()}px`};
-  object-position: ${(props: CommunityImageProps) =>
-    props.isMobile ? "center" : "left top"};
+const CommunityImage = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   border: 2px solid black;
 `;
 
-const ContentContainer = styled.div<{ isMobile: boolean }>`
+const ContentContainer = styled.div`
   display: flex;
   flex-direction: column;
-  flex: 1;
-  padding-left: ${({ isMobile }) => (isMobile ? "0" : "20px")};
-  min-width: 0;
-`;
-
-const TitleContainer = styled.div`
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 20px;
+  flex: 2;
+  padding-left: 20px;
+  padding-right: 20px;
 `;
 
 const Title = styled.h2`
   font-weight: bold;
-  text-align: center;
+  text-align: left;
   font-size: 24px;
 `;
 
 const Description = styled.p`
+  margin-top: 20px;
   margin-bottom: 20px;
   line-height: 1.6;
 `;
@@ -106,66 +93,30 @@ const ErrorMessage = styled.p`
 `;
 
 const Footer = styled.div`
+  flex-grow: 0;
+  flex-shrink: 0;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   height: 40px;
+  padding-right: 20px;
 `;
 
 const StyledDivider = styled(Separator)`
   margin: 20px;
 `;
 
-const LanguageSelect = styled(MenuList)`
-  font-size: 0.8rem;
-  padding: 0px 8px;
-`;
-
-const StyledMenuListItem = styled(MenuListItem)`
-  margin: 4px;
+const HozizontalDivider = styled(Separator)`
+  margin: 20px 0;
+  flex-grow: 0;
+  flex-shrink: 0;
 `;
 
 export function Community(): ReactNode {
   const [language, setLanguage] = useState<Language>("en");
   const [error, setError] = useState<string>("");
   const [currentView, setCurrentView] = useState<"main" | "payment">("main");
-  const [isMobile, setIsMobile] = useState<boolean>(false);
   const data = content[language];
-  const [windowSize, setWindowSize] = useState<{
-    width: number;
-    height: number;
-  }>({ width: 1200, height: 750 });
-  const [element, ref] = useNullableState<HTMLDivElement>();
-
-  useEffect(() => {
-    const checkMobile = (): void => {
-      setIsMobile(windowSize.width <= 600);
-    };
-
-    checkMobile();
-    addEventListener("resize", checkMobile);
-
-    return () => {
-      removeEventListener("resize", checkMobile);
-    };
-  }, [windowSize]);
-
-  useEffect(() => {
-    if (!element) return;
-
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const { width, height } = entry.contentRect;
-        setWindowSize({ width, height });
-      }
-    });
-
-    resizeObserver.observe(element);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [element]);
 
   const handleToggleView = (): void => {
     setCurrentView(currentView === "main" ? "payment" : "main");
@@ -188,80 +139,80 @@ export function Community(): ReactNode {
     </BulletPoint>
   );
 
-  const commonProps: CommonProps = {
-    language,
-    data,
-    setError,
-    error,
-  };
   return (
     <StyledWindow
+      className={cssModule.window}
       window="Community"
       defaultWidth={1200}
       defaultHeight={750}
-      ref={ref}
     >
-      <ContentWrapper isMobile={isMobile}>
-        <ImageContainer isMobile={isMobile}>
-          <CommunityImage
-            src={communityImage.src}
-            alt="Community"
-            maxWidth={
-              isMobile ? windowSize.width * 0.45 : windowSize.width * 0.5
-            }
-            maxHeight={
-              isMobile ? windowSize.height * 0.3 : windowSize.height * 0.75
-            }
-            isMobile={isMobile}
-          />
-        </ImageContainer>
-        <ContentContainer isMobile={isMobile}>
-          {currentView === "main" ? (
-            <>
-              <TitleContainer>
+      <ScrollView>
+        <ContentWrapper className={cssModule.contentWrapper}>
+          <ImageContainer className={cssModule.imageContainer}>
+            <CommunityImage src={communityImage.src} alt="Community" />
+          </ImageContainer>
+          <ContentContainer className={cssModule.contentContainer}>
+            {currentView === "main" ? (
+              <>
                 <Title>{data.title}</Title>
-              </TitleContainer>
-              <Description>{renderDescription(data.description)}</Description>
-              {renderBulletPoint(<Wab321019 />, data.communityDetails)}
-              {renderBulletPoint(<User />, data.ownerIntroduction)}
-              {renderBulletPoint(<User3 />, data.knowledgeSharing)}
-              {renderBulletPoint(<User2 />, data.note)}
-              {error && <ErrorMessage>{error}</ErrorMessage>}
-            </>
-          ) : (
-            <Payment {...commonProps} />
-          )}
-        </ContentContainer>
-      </ContentWrapper>
-      <StyledDivider />
-      <Footer>
-        <Button onClick={handleToggleView}>
-          {currentView === "main" ? data.joinButton : data.backButton}
-        </Button>
-        <StyledDivider orientation="vertical" />
-        <LanguageSelect inline>
-          <StyledMenuListItem
-            square
-            size="sm"
-            onClick={() => {
-              handleLanguageChange("en");
+                <Description>{renderDescription(data.description)}</Description>
+                {renderBulletPoint(<Wab321019 />, data.communityDetails)}
+                {renderBulletPoint(<User />, data.ownerIntroduction)}
+                {renderBulletPoint(<User3 />, data.knowledgeSharing)}
+                {renderBulletPoint(<User2 />, data.note)}
+                {error && <ErrorMessage>{error}</ErrorMessage>}
+              </>
+            ) : (
+              <Payment
+                language={language}
+                data={data}
+                setError={setError}
+                error={error}
+              />
+            )}
+          </ContentContainer>
+        </ContentWrapper>
+        <HozizontalDivider />
+        <Footer>
+          <Button onClick={handleToggleView}>
+            {currentView === "main" ? data.joinButton : data.backButton}
+          </Button>
+          <StyledDivider orientation="vertical" />
+          <GroupBox
+            style={{
+              margin: "0px",
+              padding: "6px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
-            primary={language === "en"}
           >
-            <span style={{ fontSize: "12px" }}>EN</span>
-          </StyledMenuListItem>
-          <StyledMenuListItem
-            square
-            size="sm"
-            onClick={() => {
-              handleLanguageChange("vi");
-            }}
-            primary={language === "vi"}
-          >
-            <span style={{ fontSize: "12px" }}>VI</span>
-          </StyledMenuListItem>
-        </LanguageSelect>
-      </Footer>
+            <Radio
+              style={{
+                margin: "0px",
+                padding: "0px",
+                marginRight: "10px",
+                fontSize: "12px",
+              }}
+              checked={language === "en"}
+              onChange={() => {
+                handleLanguageChange("en");
+              }}
+              value="en"
+              label="EN"
+            />
+            <Radio
+              style={{ margin: "0px", padding: "0px", fontSize: "12px" }}
+              checked={language === "vi"}
+              onChange={() => {
+                handleLanguageChange("vi");
+              }}
+              value="vi"
+              label="VI"
+            />
+          </GroupBox>
+        </Footer>
+      </ScrollView>
     </StyledWindow>
   );
 }
