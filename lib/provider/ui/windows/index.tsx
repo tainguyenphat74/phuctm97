@@ -6,6 +6,7 @@ import { openWindowsAtom } from "~/lib/window";
 
 import { ChatGPT } from "./chatgpt";
 import { Community } from "./community";
+import { ControlPanel } from "./control-panel";
 import { Exception } from "./exception";
 import { NotFound } from "./not-found";
 import { Notepad } from "./notepad";
@@ -28,6 +29,9 @@ function Window({ window }: WindowProps): ReactNode {
     }
     case "Community": {
       return <Community />;
+    }
+    case "Control Panel": {
+      return <ControlPanel />;
     }
     case "404": {
       return <NotFound />;

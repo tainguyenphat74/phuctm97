@@ -1,12 +1,12 @@
 import type { PropsWithChildren, ReactNode } from "react";
 
 import { DirectionProvider } from "@radix-ui/react-direction";
-import { Provider } from "jotai";
+import { Provider, useAtomValue } from "jotai";
 import { styleReset } from "react95";
-import originalTheme from "react95/dist/themes/original";
 import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
 
 import { i18n } from "~/lib/i18n";
+import { themeAtom } from "~/lib/theme-atom";
 
 import { Header } from "./header";
 import { Windows } from "./windows";
@@ -42,19 +42,24 @@ const Main = styled.main`
   overflow: hidden;
 `;
 
+function Document({ children }: PropsWithChildren): ReactNode {
+  const theme = useAtomValue(themeAtom);
+  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+}
+
 export function UI({ children }: PropsWithChildren): ReactNode {
   return (
-    <ThemeProvider theme={originalTheme}>
-      <Style />
-      <DirectionProvider dir={i18n.dir}>
-        <Provider>
+    <Provider>
+      <Document>
+        <Style />
+        <DirectionProvider dir={i18n.dir}>
           <Header />
           <Main>
             {children}
             <Windows />
           </Main>
-        </Provider>
-      </DirectionProvider>
-    </ThemeProvider>
+        </DirectionProvider>
+      </Document>
+    </Provider>
   );
 }

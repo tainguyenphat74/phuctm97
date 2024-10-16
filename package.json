@@ -52,6 +52,7 @@
     "rimraf": "^5.0.7",
     "sharp": "^0.33.4",
     "styled-components": "^5.3.11",
+    "title-case": "^4.3.2",
     "typescript": "~5.4.5",
     "zod": "^3.23.8",
     "zod-to-json-schema": "^3.23.1"
