@@ -1,63 +1,68 @@
 import type { ReactNode } from "react";
-import type { SelectOption } from "react95/dist/Select/Select.types";
+import type { SelectProps } from "react95";
 import type { Theme } from "react95/dist/types";
 
-import { useAtom } from "jotai";
-import { useEffect, useState } from "react";
-import { GroupBox, Select } from "react95";
-import { titleCase } from "title-case";
+import { capitalCase, splitSeparateNumbers } from "change-case";
+import { atom, useAtom, useAtomValue } from "jotai";
+import { Suspense, useCallback } from "react";
+import { GroupBox, Hourglass, Select } from "react95";
+import styled from "styled-components";
 
 import { themeAtom } from "~/lib/theme-atom";
 import { Window } from "~/lib/window";
 
-export function ControlPanel(): ReactNode {
+const themesAtom = atom(async () => {
+  const imported = await import("react95/dist/themes");
+  return Object.entries(imported.default).map(([key, value]) => ({
+    label: capitalCase(key, { split: splitSeparateNumbers }),
+    value,
+  }));
+});
+
+function ThemeSelect(): ReactNode {
+  const themes = useAtomValue(themesAtom);
   const [theme, setTheme] = useAtom(themeAtom);
-  const [selectedTheme, setSelectedTheme] = useState<string>("original");
-  const [themesMap, setThemesMap] = useState<Record<string, Theme>>(
-    {} as Record<string, Theme>,
+  const handleChange = useCallback<NonNullable<SelectProps<Theme>["onChange"]>>(
+    ({ value }) => {
+      setTheme(value);
+    },
+    [setTheme],
   );
-  const [themeOptions, setThemeOptions] = useState<SelectOption<string>[]>([]);
+  return (
+    <Select
+      options={themes}
+      value={theme}
+      onChange={handleChange}
+      menuMaxHeight={120}
+      width="100%"
+    />
+  );
+}
 
-  useEffect(() => {
-    const loadThemes = async (): Promise<void> => {
-      const themes = await import("react95/dist/themes");
+const Centered = styled.div`
+  flex-grow: 1;
+  flex-shrink: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+`;
 
-      const themeEntries = Object.entries(themes.default);
-      setThemesMap(Object.fromEntries(themeEntries));
-
-      const options = themeEntries.map(([key]) => ({
-        label: titleCase(key),
-        value: key,
-      }));
-      setThemeOptions(options);
-    };
-
-    void loadThemes();
-  }, []);
-
-  useEffect(() => {
-    const currentThemeType =
-      Object.keys(themesMap).find((key) => themesMap[key] === theme) ??
-      "original";
-
-    setSelectedTheme(currentThemeType);
-  }, [theme, themesMap]);
-
-  const handleThemeChange = (selectedOption: SelectOption<string>): void => {
-    setTheme(themesMap[selectedOption.value]);
-    setSelectedTheme(selectedOption.value);
-  };
-
+export function ControlPanel(): ReactNode {
   return (
     <Window window="Control Panel" defaultWidth={280} defaultHeight={250}>
-      <GroupBox label="Theme">
-        <Select
-          options={themeOptions}
-          onChange={handleThemeChange}
-          value={selectedTheme}
-          menuMaxHeight={120}
-        />
-      </GroupBox>
+      <Suspense
+        fallback={
+          <Centered>
+            <Hourglass />
+          </Centered>
+        }
+      >
+        <GroupBox label="Theme">
+          <ThemeSelect />
+        </GroupBox>
+      </Suspense>
     </Window>
   );
 }
