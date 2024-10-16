@@ -65,9 +65,9 @@ export function StartButton(): ReactNode {
             {[
               "Welcome",
               "Community",
-              "ChatGPT",
-              "Notepad",
               "Control Panel",
+              "Notepad",
+              "ChatGPT",
             ].map((window) => (
               <ConnectedMenuListItem key={window} window={window} />
             ))}

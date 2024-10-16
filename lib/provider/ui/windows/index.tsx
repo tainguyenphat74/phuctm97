@@ -21,17 +21,17 @@ function Window({ window }: WindowProps): ReactNode {
     case "Welcome": {
       return <Welcome />;
     }
-    case "Notepad": {
-      return <Notepad />;
-    }
-    case "ChatGPT": {
-      return <ChatGPT />;
-    }
     case "Community": {
       return <Community />;
     }
     case "Control Panel": {
       return <ControlPanel />;
+    }
+    case "Notepad": {
+      return <Notepad />;
+    }
+    case "ChatGPT": {
+      return <ChatGPT />;
     }
     case "404": {
       return <NotFound />;
