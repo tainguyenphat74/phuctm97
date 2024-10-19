@@ -1,12 +1,21 @@
 import type { ReactNode } from "react";
 
-import { Bulb, Faxcover140, Progman24 } from "@react95/icons";
+import {
+  Bookmark,
+  Bulb,
+  Confcp102,
+  Faxcover140,
+  Progman24,
+  Ulclient1002,
+} from "@react95/icons";
 import { useCallback, useState } from "react";
 import { Anchor, Button, Frame, Separator } from "react95";
 import { createHatchedBackground, createScrollbars } from "react95/dist/common";
 import styled from "styled-components";
 
 import { Window } from "~/lib/window";
+
+import cssModule from "./index.module.css";
 
 const StyledFrame = styled(Frame)`
   flex-grow: 1;
@@ -20,6 +29,43 @@ const StyledFrame = styled(Frame)`
       secondaryColor: theme.canvas,
     })};
   ${createScrollbars()}
+`;
+
+const StyledSeparator = styled(Separator)`
+  flex-shrink: 0;
+  margin-top: 40px;
+  margin-bottom: 20px;
+`;
+
+const StyledTitle = styled.h1`
+  flex-shrink: 0;
+  font-size: 2rem;
+  line-height: 2.625rem;
+  font-weight: bold;
+`;
+
+const ContentWindow = styled.div`
+  flex-grow: 1;
+  flex-shrink: 1;
+  display: flex;
+  overflow: hidden;
+  margin-top: 10px;
+`;
+
+const ActionButtonsContainer = styled.div`
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  svg {
+    display: none;
+  }
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 function openGithub(): void {
@@ -247,39 +293,57 @@ export function Welcome(): ReactNode {
     setTab("acknowledgements");
   }, [setTab]);
   return (
-    <Window window="Welcome" defaultWidth={720} defaultHeight={454}>
-      <h1 css="flex-shrink: 0; font-size: 2rem; line-height: 2.625rem; font-weight: bold;">
+    <Window
+      window="Welcome"
+      defaultWidth={720}
+      defaultHeight={454}
+      className={cssModule.window}
+    >
+      <StyledTitle className={cssModule.title}>
         Welcome to @phuctm97
-      </h1>
-      <div css="flex-grow: 1; flex-shrink: 1; display: flex; overflow: hidden; margin-top: 10px;">
-        <StyledFrame variant="well">
+      </StyledTitle>
+      <ContentWindow className={cssModule.contentWindowWrapper}>
+        <StyledFrame variant="well" className={cssModule.contentWrapperFrame}>
           <Content tab={tab} />
         </StyledFrame>
-        <div css="flex-shrink: 0; display: flex; flex-direction: column; align-items: stretch;">
-          <Button css="flex-shrink: 0;" onClick={handleClickAboutWebsite}>
-            About this Website
-          </Button>
-          <Button
-            css="flex-shrink: 0; margin-top: 10px;"
-            onClick={handleClickAboutAuthor}
-          >
-            About the Author
-          </Button>
-          <Separator css="flex-shrink: 0; margin-top: 40px; margin-bottom: 20px;" />
-          <Button css="flex-shrink: 0;" onClick={handleClickAcknowledgements}>
-            Acknowledgements
-          </Button>
-          <Button css="flex-shrink: 0; margin-top: 10px;" onClick={openGithub}>
-            GitHub ↗
-          </Button>
-          <Button
-            css="flex-shrink: 0; margin-top: 10px;"
-            onClick={openXOrTwitter}
-          >
-            X/Twitter ↗
-          </Button>
-        </div>
-      </div>
+        <ActionButtonsContainer className={cssModule.actionButtonsContainer}>
+          <ButtonGroup className={cssModule.buttonGroup}>
+            <Button css="flex-shrink: 0;" onClick={handleClickAboutWebsite}>
+              <span>About this Website</span>
+              <Confcp102 />
+            </Button>
+            <Button
+              css="flex-shrink: 0; margin-top: 10px;"
+              className={cssModule.button}
+              onClick={handleClickAboutAuthor}
+            >
+              <span>About the Author</span>
+              <Ulclient1002 />
+            </Button>
+            <StyledSeparator className={cssModule.separator} />
+            <Button css="flex-shrink: 0;" onClick={handleClickAcknowledgements}>
+              <span>Acknowledgements</span>
+              <Bookmark />
+            </Button>
+          </ButtonGroup>
+          <ButtonGroup className={cssModule.buttonGroup}>
+            <Button
+              css="flex-shrink: 0; margin-top: 10px;"
+              onClick={openGithub}
+            >
+              GitHub
+              <span className={cssModule.externalLinkSymbol}> ↗</span>
+            </Button>
+            <Button
+              css="flex-shrink: 0; margin-top: 10px;"
+              onClick={openXOrTwitter}
+            >
+              X/Twitter
+              <span className={cssModule.externalLinkSymbol}> ↗</span>
+            </Button>
+          </ButtonGroup>
+        </ActionButtonsContainer>
+      </ContentWindow>
     </Window>
   );
 }
