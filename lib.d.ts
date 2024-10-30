@@ -1,7 +1,9 @@
 /// <reference types="@edge-runtime/types" />
 
+import "jotai";
 import "next";
 import "react";
+import "styled-components";
 
 import type { Atom, getDefaultStore, WritableAtom } from "jotai";
 import type { Theme } from "react95/dist/themes/types";

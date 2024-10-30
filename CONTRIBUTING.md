@@ -18,12 +18,6 @@
   pnpm install
   ```
 
-- Clean outputs
-
-  ```
-  pnpm clean
-  ```
-
 - Format code
 
   ```
@@ -102,7 +96,7 @@ To run scripts in Visual Studio Code
 
    - _Tasks: Run Build Task_ － Run build script
    - _Tasks: Run Test Task_ － Run test script
-   - _Tasks: Run Task_ － Run script (`pnpm clean`, `pnpm format`, etc.)
+   - _Tasks: Run Task_ － Run script (`pnpm format`, `pnpm lint`, etc.)
 
 [pnpm]: https://pnpm.io
 [node.js]: https://nodejs.org

@@ -2,14 +2,6 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "clean",
-      "icon": { "id": "trash" },
-      "type": "process",
-      "command": "pnpm",
-      "args": ["clean"],
-      "problemMatcher": []
-    },
-    {
       "label": "format",
       "icon": { "id": "replace-all" },
       "type": "process",

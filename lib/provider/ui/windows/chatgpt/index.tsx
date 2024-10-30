@@ -67,7 +67,7 @@ interface Progress {
   text: string;
 }
 
-const progressAtom = atom<Progress | undefined>(undefined);
+const progressAtom = atom<Progress>();
 
 const engineRefreshableAtom = atom(0);
 
@@ -150,20 +150,18 @@ function Input(): ReactNode {
     ref.current?.focus();
   }, [setContent, ref]);
   const submit = useSetAtom(submitAtom);
-  const handleSend = useCallback<
-    MouseEventHandler<HTMLButtonElement>
-  >(async () => {
-    await submit();
+  const handleSend = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
+    void submit();
   }, [submit]);
   const handleKeyDown = useCallback<KeyboardEventHandler<HTMLTextAreaElement>>(
-    async (event) => {
+    (event) => {
       if (
         !event.nativeEvent.isComposing &&
         (event.metaKey || event.ctrlKey) &&
         event.key === "Enter"
       ) {
         event.preventDefault();
-        await submit();
+        void submit();
       }
     },
     [submit],
@@ -229,6 +227,10 @@ const tryAgainAtom = atomWithWriteOnly((get, set) => {
   set(engineRefreshableAtom, (refreshable) => refreshable + 1);
 });
 
+function getErrorText(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
 function Loadable(): ReactNode {
   const loadable = useAtomValue(loadableAtom);
   const tryAgain = useSetAtom(tryAgainAtom);
@@ -246,9 +248,7 @@ function Loadable(): ReactNode {
             />
             <p>
               {loadable.error
-                ? loadable.error instanceof Error
-                  ? loadable.error.message
-                  : String(loadable.error)
+                ? getErrorText(loadable.error)
                 : "Sorry, an error occurred"}
             </p>
           </div>

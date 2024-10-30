@@ -1,47 +1,64 @@
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
   root: true,
+  parser: "@typescript-eslint/parser",
+  parserOptions: { projectService: true },
+  settings: {
+    "import/resolver": { typescript: true, node: true },
+    react: { version: "detect" },
+  },
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/strict-type-checked",
     "plugin:@typescript-eslint/stylistic-type-checked",
     "plugin:import/recommended",
     "plugin:import/typescript",
-    "plugin:jsx-a11y/recommended",
     "plugin:unicorn/recommended",
-    "next/core-web-vitals",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:react-hooks/recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:@next/next/recommended",
+    "plugin:@next/next/core-web-vitals",
     "prettier",
   ],
-  plugins: ["no-relative-import-paths", "simple-import-sort"],
-  parserOptions: { project: true },
-  settings: { "import/resolver": "typescript" },
+  plugins: ["simple-import-sort", "no-relative-import-paths"],
   rules: {
-    "no-useless-return": "error",
-    "no-useless-rename": "error",
     "no-restricted-imports": [
       "error",
-      { patterns: ["~/app*", "~/script*", "~/lib/*/"] },
+      { patterns: ["~/app*", "~/script*", "~/.*", "~/lib/*/"] },
     ],
-    "no-restricted-globals": ["error", "window"],
+    "no-restricted-globals": [
+      "error",
+      "window",
+      "self",
+      "global",
+      "globalThis",
+    ],
+    "no-useless-rename": "error",
+    "no-useless-return": "error",
     "object-shorthand": "error",
     "arrow-body-style": "error",
     "lines-around-directive": "error",
     curly: ["error", "multi-or-nest", "consistent"],
-    quotes: "off",
-    "@typescript-eslint/quotes": ["error", "double", { avoidEscape: true }],
+    quotes: ["error", "double", { avoidEscape: true }],
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": [
       "error",
       { ignoreRestSiblings: true },
+    ],
+    "@typescript-eslint/no-explicit-any": ["error", { ignoreRestArgs: true }],
+    "@typescript-eslint/no-empty-object-type": [
+      "error",
+      { allowInterfaces: "with-single-extends" },
     ],
     "@typescript-eslint/no-import-type-side-effects": "error",
     "@typescript-eslint/consistent-type-imports": "error",
     "@typescript-eslint/explicit-function-return-type": [
       "error",
       {
-        allowConciseArrowFunctionExpressionsStartingWithVoid: true,
         allowExpressions: true,
-        allowIIFEs: true,
+        allowConciseArrowFunctionExpressionsStartingWithVoid: true,
       },
     ],
     "import/first": "error",
@@ -50,10 +67,41 @@ module.exports = {
     "import/no-cycle": "error",
     "import/no-self-import": "error",
     "import/no-useless-path-segments": ["error", { noUselessIndex: true }],
-    "no-relative-import-paths/no-relative-import-paths": [
+    "import/no-extraneous-dependencies": [
       "error",
-      { prefix: "~", allowSameFolder: true },
+      {
+        devDependencies: false,
+        peerDependencies: false,
+        bundledDependencies: false,
+        optionalDependencies: false,
+      },
     ],
+    "unicorn/no-null": "off",
+    "unicorn/prefer-global-this": "off",
+    "unicorn/prevent-abbreviations": [
+      "error",
+      {
+        replacements: {
+          lib: { library: false },
+          env: { environment: false },
+          ref: { reference: false },
+          args: { arguments: false },
+          params: { parameters: false },
+          props: { properties: false },
+        },
+      },
+    ],
+    "react/prop-types": "off",
+    "react/no-unknown-property": ["error", { ignore: ["css"] }],
+    "react/self-closing-comp": "error",
+    "react/jsx-no-useless-fragment": "error",
+    "react/jsx-curly-brace-presence": "error",
+    "react/jsx-boolean-value": "error",
+    "react/jsx-filename-extension": [
+      "error",
+      { allow: "as-needed", extensions: [".tsx", ".jsx"] },
+    ],
+    "react-hooks/exhaustive-deps": "error",
     "simple-import-sort/imports": [
       "error",
       {
@@ -75,54 +123,22 @@ module.exports = {
       },
     ],
     "simple-import-sort/exports": "error",
-    "react/self-closing-comp": "error",
-    "react/jsx-no-useless-fragment": ["error", { allowExpressions: true }],
-    "react/jsx-curly-brace-presence": "error",
-    "react/jsx-filename-extension": [
+    "no-relative-import-paths/no-relative-import-paths": [
       "error",
-      { allow: "as-needed", extensions: [".tsx"] },
+      { prefix: "~", allowSameFolder: true },
     ],
-    "unicorn/no-useless-undefined": ["error", { checkArguments: false }],
-    "unicorn/prevent-abbreviations": [
-      "error",
-      {
-        replacements: {
-          env: { environment: false },
-          lib: { library: false },
-          ref: { reference: false },
-          param: { parameter: false },
-          params: { parameters: false },
-          prop: { property: false },
-          props: { properties: false },
-          arg: { argument: false },
-          args: { arguments: false },
-        },
-      },
-    ],
-    "unicorn/catch-error-name": ["error", { ignore: [/^cause$/] }],
   },
   overrides: [
     {
-      files: "./lib.d.ts",
-      rules: {
-        "@typescript-eslint/no-empty-interface": [
-          "error",
-          { allowSingleExtends: true },
-        ],
-      },
-    },
-    {
-      files: ["./*.{ts,tsx}", "lib/*.{ts,tsx}"],
+      files: [".", "lib"].map(
+        (directory) => `${directory}/*.{ts,cts,mts,tsx,js,jsx}`,
+      ),
       rules: {
         "no-relative-import-paths/no-relative-import-paths": [
           "error",
           { prefix: "~", allowSameFolder: false },
         ],
       },
-    },
-    {
-      files: ["./lib/atom-with-nullable.ts", "./lib/use-nullable-state.ts"],
-      rules: { "unicorn/no-null": "off" },
     },
   ],
 };
