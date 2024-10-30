@@ -1,6 +1,13 @@
 export type Language = "vi" | "en";
 
-export interface ContentType {
+export interface CommonProps {
+  language: Language;
+  data: Locale;
+  setError: (error: string) => void;
+  error: string;
+}
+
+interface Locale {
   title: string;
   description: string;
   note: string;
@@ -20,9 +27,9 @@ export interface ContentType {
   proceedToPayment: string;
 }
 
-export interface Content {
-  vi: ContentType;
-  en: ContentType;
+interface Content {
+  vi: Locale;
+  en: Locale;
 }
 
 export const content: Content = {
@@ -75,10 +82,3 @@ export const content: Content = {
     proceedToPayment: "Proceed to Payment",
   },
 };
-
-export interface CommonProps {
-  language: Language;
-  data: ContentType;
-  setError: (error: string) => void;
-  error: string;
-}

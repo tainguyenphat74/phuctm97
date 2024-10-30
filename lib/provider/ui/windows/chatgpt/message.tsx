@@ -65,11 +65,11 @@ const StyledGroupBox = styled(GroupBox)`
   margin-right: 8px;
 `;
 
-export interface MessageProps {
+interface Props {
   message: ChatCompletionMessageParam;
 }
 
-export function Message({ message }: MessageProps): ReactNode {
+export function Message({ message }: Props): ReactNode {
   switch (message.role) {
     case "user": {
       return (
