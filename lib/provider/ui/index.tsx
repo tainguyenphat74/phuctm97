@@ -10,6 +10,7 @@ import { themeAtom } from "~/lib/theme-atom";
 
 import { Header } from "./header";
 import { Windows } from "./windows";
+import { store } from "./windows/solitaire/jotai";
 
 const Style = createGlobalStyle`
   ${styleReset}
@@ -46,10 +47,9 @@ function Document({ children }: PropsWithChildren): ReactNode {
   const theme = useAtomValue(themeAtom);
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 }
-
 export function UI({ children }: PropsWithChildren): ReactNode {
   return (
-    <Provider>
+    <Provider store={store}>
       <Document>
         <Style />
         <DirectionProvider dir={i18n.dir}>
