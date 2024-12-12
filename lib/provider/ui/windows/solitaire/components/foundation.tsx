@@ -2,14 +2,9 @@
 import type { ReactNode } from "react";
 
 import { useAtomValue } from "jotai";
-import { useEffect } from "react";
 
-import { absolute, stock } from "~/lib/provider/ui/windows/solitaire/global";
-import {
-  foundationAtom,
-  store,
-  wasteAtom,
-} from "~/lib/provider/ui/windows/solitaire/jotai";
+import { absolute } from "~/lib/provider/ui/windows/solitaire/global";
+import { foundationAtom } from "~/lib/provider/ui/windows/solitaire/jotai";
 import { Place } from "~/lib/provider/ui/windows/solitaire/types";
 
 import { Card } from "./card";

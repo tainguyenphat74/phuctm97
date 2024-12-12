@@ -2,14 +2,12 @@
 import type { ReactNode } from "react";
 
 import { useAtomValue } from "jotai";
-import { useEffect } from "react";
 import styled from "styled-components";
 
 import {
   absolute,
   cardHeight,
   cardWidth,
-  stock,
 } from "~/lib/provider/ui/windows/solitaire/global";
 import { wasteAtom } from "~/lib/provider/ui/windows/solitaire/jotai";
 
