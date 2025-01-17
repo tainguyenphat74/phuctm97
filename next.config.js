@@ -2,5 +2,4 @@
 export default {
   compiler: { styledComponents: true },
   eslint: { dirs: ["."] },
-  reactStrictMode: false,
 };

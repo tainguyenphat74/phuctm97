@@ -1,11 +1,9 @@
-/* eslint-disable no-restricted-imports */
 import type { ReactNode } from "react";
 
 import { useAtomValue } from "jotai";
 
-import { absolute } from "~/lib/provider/ui/windows/solitaire/global";
-import { foundationAtom } from "~/lib/provider/ui/windows/solitaire/jotai";
-import { Place } from "~/lib/provider/ui/windows/solitaire/types";
+import { absolute } from "~/lib/solitaire-constant";
+import { foundationAtom } from "~/lib/solitaire-foudation-atom";
 
 import { Card } from "./card";
 import { Holder } from "./holder";
@@ -16,11 +14,7 @@ export function Foundation(): ReactNode {
   return (
     <>
       {Object.entries(foundation).map(([index, cards]) => (
-        <Holder
-          place={Place.FOUNDATION}
-          columnIndex={Number(index)}
-          key={index}
-        >
+        <Holder place="foundation" columnIndex={Number(index)} key={index}>
           {cards.map((card) => (
             <Card key={card.id} card={card} style={absolute} />
           ))}

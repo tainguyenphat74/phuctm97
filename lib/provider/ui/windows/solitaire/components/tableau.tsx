@@ -1,14 +1,12 @@
-/* eslint-disable no-restricted-imports */
 import type { ReactNode } from "react";
 
-import type { Card } from "~/lib/provider/ui/windows/solitaire/types";
+import type { Card } from "~/lib/solitaire-card-interface";
 
 import { useAtomValue } from "jotai";
 import styled from "styled-components";
 
-import { cardWidth } from "~/lib/provider/ui/windows/solitaire/global";
-import { tableauAtom } from "~/lib/provider/ui/windows/solitaire/jotai";
-import { Place } from "~/lib/provider/ui/windows/solitaire/types";
+import { cardWidth } from "~/lib/solitaire-constant";
+import { tableauAtom } from "~/lib/solitaire-tableau-atom";
 
 import { Card as CardComponent } from "./card";
 import { Holder } from "./holder";
@@ -57,7 +55,7 @@ function BoardColumn({
   return (
     <TableauColumnStyled>
       <Holder
-        place={Place.TABLEAU}
+        place="tableau"
         columnIndex={columnIndex}
         canDrop={cards.length === 0}
       >

@@ -1,15 +1,10 @@
-/* eslint-disable no-restricted-imports */
 import type { ReactNode } from "react";
 
 import { useAtomValue } from "jotai";
 import styled from "styled-components";
 
-import {
-  absolute,
-  cardHeight,
-  cardWidth,
-} from "~/lib/provider/ui/windows/solitaire/global";
-import { wasteAtom } from "~/lib/provider/ui/windows/solitaire/jotai";
+import { absolute, cardHeight, cardWidth } from "~/lib/solitaire-constant";
+import { wasteAtom } from "~/lib/solitaire-waste-atom";
 
 import { Card } from "./card";
 

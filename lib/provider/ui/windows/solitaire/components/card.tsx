@@ -1,17 +1,15 @@
-/* eslint-disable no-restricted-imports */
 import type { CSSProperties, ReactNode } from "react";
 
-import type { Card } from "~/lib/provider/ui/windows/solitaire/types";
+import type { Card } from "~/lib/solitaire-card-interface";
+import type { Place } from "~/lib/solitaire-types";
 
+import { useSetAtom } from "jotai";
 import { useDrag, useDrop } from "react-dnd";
 import styled from "styled-components";
 
-import {
-  cardHeight,
-  cardWidth,
-} from "~/lib/provider/ui/windows/solitaire/global";
-import img from "~/lib/provider/ui/windows/solitaire/spritesheet.png";
-import { moveCard } from "~/lib/provider/ui/windows/solitaire/utils";
+import { cardHeight, cardWidth } from "~/lib/solitaire-constant";
+import { moveCardAtom } from "~/lib/solitaire-move-card-write-only-atom";
+import img from "~/lib/solitaire-spritesheet.png";
 
 const CardStyled = styled.div<{
   card: Card;
@@ -35,6 +33,12 @@ interface CardProps {
   children?: ReactNode;
 }
 
+interface DragItem {
+  droppedCard: Card;
+  sourcePlace: Place;
+  sourceColumn: number;
+}
+
 export function Card({
   card,
   canDrag = true,
@@ -42,9 +46,15 @@ export function Card({
   style,
   children,
 }: CardProps): ReactNode {
+  const moveCard = useSetAtom(moveCardAtom);
+
   const [{ isDragging }, drag] = useDrag({
     type: "CARD",
-    item: { droppedCard: card },
+    item: {
+      droppedCard: card,
+      sourcePlace: card.place,
+      sourceColumn: card.column,
+    },
     canDrag,
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
@@ -54,8 +64,18 @@ export function Card({
   const [, drop] = useDrop({
     accept: "CARD",
     canDrop: () => canDrop,
-    drop: ({ droppedCard }: { droppedCard: Card }) => {
-      moveCard(droppedCard, card.place, card.column);
+    drop: ({ droppedCard, sourcePlace, sourceColumn }: DragItem) => {
+      moveCard({
+        card: droppedCard,
+        from: {
+          place: sourcePlace,
+          column: sourceColumn,
+        },
+        to: {
+          place: card.place,
+          column: card.column,
+        },
+      });
     },
   });
 

@@ -1,5 +1,3 @@
-/* eslint-disable no-restricted-imports */
-
 import type { ReactNode } from "react";
 
 import { useAtom } from "jotai";
@@ -11,10 +9,10 @@ import {
   backgroundPositionFacingDown,
   cardHeight,
   cardWidth,
-  stock,
-} from "~/lib/provider/ui/windows/solitaire/global";
-import { wasteAtom } from "~/lib/provider/ui/windows/solitaire/jotai";
-import img from "~/lib/provider/ui/windows/solitaire/spritesheet.png";
+} from "~/lib/solitaire-constant";
+import { stock } from "~/lib/solitaire-global";
+import img from "~/lib/solitaire-spritesheet.png";
+import { wasteAtom } from "~/lib/solitaire-waste-atom";
 
 const PileStyled = styled.div`
   display: flex;

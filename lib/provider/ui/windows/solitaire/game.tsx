@@ -1,25 +1,27 @@
 import type { ReactNode } from "react";
 
-import type { Card } from "./types";
+import type { Card } from "~/lib/solitaire-card-interface";
+import type { Type } from "~/lib/solitaire-types";
 
+import { useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import styled from "styled-components";
 
-import { Foundation } from "./components/foundation";
-import { Pile } from "./components/pile";
-import { Tableau } from "./components/tableau";
-import { Waste } from "./components/waste";
 import {
   backgroundPositionFacingDown,
   cardHeight,
   cardWidth,
-  stock,
-} from "./global";
-import { store, tableauAtom } from "./jotai";
-import { Place, Type } from "./types";
-import { isBlack, shuffleCards, updateCardInfo } from "./utils";
+} from "~/lib/solitaire-constant";
+import { stock } from "~/lib/solitaire-global";
+import { tableauAtom } from "~/lib/solitaire-tableau-atom";
+import { isBlack, shuffleCards, updateCardInfo } from "~/lib/solitaire-utils";
+
+import { Foundation } from "./components/foundation";
+import { Pile } from "./components/pile";
+import { Tableau } from "./components/tableau";
+import { Waste } from "./components/waste";
 
 const Wrapper = styled.div`
   display: flex;
@@ -44,10 +46,11 @@ const Upper = styled.div`
   padding: 5px;
 `;
 
-export function init(): void {
+export function init(): Record<number, Card[]> {
   const cards: Card[] = [];
+  const types: Type[] = ["clubs", "diamonds", "hearts", "spades"];
 
-  for (const [index, type] of Object.values(Type).entries()) {
+  for (const [index, type] of types.entries()) {
     for (let number = 1; number <= 13; number++) {
       cards.push({
         id: `${type}-${number.toString()}`,
@@ -55,7 +58,7 @@ export function init(): void {
         black: isBlack(type),
         number,
         facingUp: false,
-        place: Place.TABLEAU,
+        place: "tableau",
         column: -1, // temporary
         backgroundPositionFacingUp: `${(cardWidth * -(number - 1)).toString()}px ${(cardHeight * -index).toString()}px`,
         backgroundPositionFacingDown,
@@ -72,24 +75,26 @@ export function init(): void {
     tableau[index][index].facingUp = true;
 
     for (const card of tableau[index])
-      updateCardInfo(card, { column: index, place: Place.TABLEAU });
+      updateCardInfo(card, { column: index, place: "tableau" });
   }
 
   // waste cards
   stock.push(...cards);
   for (const card of stock)
-    updateCardInfo(card, { facingUp: true, place: Place.WASTE });
+    updateCardInfo(card, { facingUp: true, place: "waste" });
 
-  store.set(tableauAtom, tableau);
+  return tableau;
 }
 
 export function Game(): ReactNode {
   const [loading, setLoading] = useState(true);
+  const setTableau = useSetAtom(tableauAtom);
 
   useEffect(() => {
-    init();
+    const tableau = init();
+    setTableau(tableau);
     setLoading(false);
-  }, []);
+  }, [setTableau]);
 
   if (loading) return undefined;
 
