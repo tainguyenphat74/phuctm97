@@ -29,39 +29,47 @@ export const moveCardAtom = atom(
     switch (from.place) {
       case "tableau": {
         const tableau = { ...get(tableauAtom) };
-        const sourceColumn = tableau[from.column];
-        const cardIndex = sourceColumn.findIndex((c) => c.id === card.id);
-        const cardsToMove = sourceColumn.splice(cardIndex);
 
-        // Update place and column for all moved cards
-        for (const c of cardsToMove) {
-          c.place = to.place;
-          c.column = to.column;
-        }
-
-        // Face up the last card in source column if exists
-        const lastCard = sourceColumn.at(-1);
-        if (lastCard) lastCard.facingUp = true;
-
-        set(tableauAtom, tableau);
-
-        // Handle moving to destination
         if (to.place === "tableau") {
-          const newTableau = { ...get(tableauAtom) };
-          const targetColumn = newTableau[to.column];
+          const targetColumn = tableau[to.column];
 
           if (!canMoveToTableau(card, targetColumn)) return;
 
-          newTableau[to.column].push(...cardsToMove);
-          set(tableauAtom, newTableau);
+          const sourceColumn = tableau[from.column];
+          const cardIndex = sourceColumn.findIndex((c) => c.id === card.id);
+          const cardsToMove = sourceColumn.splice(cardIndex);
+
+          for (const c of cardsToMove) {
+            c.place = to.place;
+            c.column = to.column;
+          }
+
+          const lastCard = sourceColumn.at(-1);
+          if (lastCard) lastCard.facingUp = true;
+
+          tableau[to.column].push(...cardsToMove);
+          set(tableauAtom, tableau);
         } else if (to.place === "foundation") {
           const foundation = { ...get(foundationAtom) };
           const targetColumn = foundation[to.column];
 
           if (!canMoveToFoundation(card, targetColumn)) return;
 
+          const sourceColumn = tableau[from.column];
+          const cardIndex = sourceColumn.findIndex((c) => c.id === card.id);
+          const cardsToMove = sourceColumn.splice(cardIndex);
+
+          for (const c of cardsToMove) {
+            c.place = to.place;
+            c.column = to.column;
+          }
+
+          const lastCard = sourceColumn.at(-1);
+          if (lastCard) lastCard.facingUp = true;
+
           foundation[to.column].push(card);
           set(foundationAtom, foundation);
+          set(tableauAtom, tableau);
         }
 
         break;
@@ -71,17 +79,15 @@ export const moveCardAtom = atom(
         const cardIndex = waste.findIndex((c) => c.id === card.id);
         const [movedCard] = waste.splice(cardIndex, 1);
 
-        // Update place and column for moved card
-        movedCard.place = to.place;
-        movedCard.column = to.column;
-
-        set(wasteAtom, waste);
-
         if (to.place === "tableau") {
           const tableau = { ...get(tableauAtom) };
           const targetColumn = tableau[to.column];
 
           if (!canMoveToTableau(movedCard, targetColumn)) return;
+
+          movedCard.place = to.place;
+          movedCard.column = to.column;
+          set(wasteAtom, waste);
 
           tableau[to.column].push(movedCard);
           set(tableauAtom, tableau);
@@ -90,6 +96,10 @@ export const moveCardAtom = atom(
           const targetColumn = foundation[to.column];
 
           if (!canMoveToFoundation(movedCard, targetColumn)) return;
+
+          movedCard.place = to.place;
+          movedCard.column = to.column;
+          set(wasteAtom, waste);
 
           foundation[to.column].push(movedCard);
           set(foundationAtom, foundation);
@@ -101,17 +111,16 @@ export const moveCardAtom = atom(
         const foundation = { ...get(foundationAtom) };
         const [movedCard] = foundation[from.column].splice(-1, 1);
 
-        // Update place and column for moved card
-        movedCard.place = to.place;
-        movedCard.column = to.column;
-
-        set(foundationAtom, foundation);
-
         if (to.place === "tableau") {
           const tableau = { ...get(tableauAtom) };
           const targetColumn = tableau[to.column];
 
           if (!canMoveToTableau(movedCard, targetColumn)) return;
+
+          movedCard.place = to.place;
+          movedCard.column = to.column;
+
+          set(foundationAtom, foundation);
 
           tableau[to.column].push(movedCard);
           set(tableauAtom, tableau);
