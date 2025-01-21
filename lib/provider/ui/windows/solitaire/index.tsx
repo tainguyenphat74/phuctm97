@@ -6,6 +6,7 @@ import styled from "styled-components";
 
 import { foundationAtom } from "~/lib/solitaire-foudation-atom";
 import { stock } from "~/lib/solitaire-global";
+import { tableauAtom } from "~/lib/solitaire-tableau-atom";
 import { wasteAtom } from "~/lib/solitaire-waste-atom";
 import { Window } from "~/lib/window";
 
@@ -14,6 +15,7 @@ import { Game, init } from "./game";
 export function Solitaire(): ReactNode {
   const setWaste = useSetAtom(wasteAtom);
   const setFoundation = useSetAtom(foundationAtom);
+  const setTableau = useSetAtom(tableauAtom);
 
   const resetGame = (): void => {
     setWaste([]);
@@ -23,7 +25,8 @@ export function Solitaire(): ReactNode {
 
   const handleNewGame = (): void => {
     resetGame();
-    init();
+    const tableau = init();
+    setTableau(tableau);
   };
 
   return (
